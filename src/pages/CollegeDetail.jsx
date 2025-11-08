@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 
 const CollegeDetail = () => {
@@ -10,14 +10,22 @@ const CollegeDetail = () => {
   const [activeTab, setActiveTab] = useState("overview");
   const [review, setReview] = useState({ stars: 5, comment: "" });
 
+  // ✅ Base configuration for Axios
+  axios.defaults.baseURL = "https://getcollege-backend.onrender.com";
+  axios.defaults.withCredentials = false;
+
   useEffect(() => {
     fetchCollegeDetail();
   }, [id]);
 
+  // ✅ Fetch one college by ID
   const fetchCollegeDetail = async () => {
     try {
-      const { data } = await axios.get(`http://localhost:5000/api/colleges/${id}`);
-      setCollege(data);
+      const { data } = await axios.get(`/api/colleges/${id}`);
+      console.log("Fetched college:", data);
+
+      // Adjust based on backend response shape
+      setCollege(data.data || data.college || data);
     } catch (error) {
       console.error("Error fetching college details:", error);
     } finally {
@@ -25,19 +33,27 @@ const CollegeDetail = () => {
     }
   };
 
+  // ✅ Add Review Handler
   const handleAddReview = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(`http://localhost:5000/api/colleges/${id}/reviews`, review);
+      await axios.post(`/api/colleges/${id}/reviews`, review);
       setReview({ stars: 5, comment: "" });
-      fetchCollegeDetail(); // Refresh data
+      fetchCollegeDetail(); // Refresh data after review submission
     } catch (error) {
       console.error("Error adding review:", error);
     }
   };
 
-  if (loading) return <div className="text-center py-12">Loading...</div>;
-  if (!college) return <div className="text-center py-12">College not found</div>;
+  if (loading)
+    return <div className="text-center py-12 text-lg font-medium">Loading college details...</div>;
+
+  if (!college)
+    return (
+      <div className="text-center py-12 text-red-600 font-semibold">
+        College not found or unable to connect to backend.
+      </div>
+    );
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -50,7 +66,7 @@ const CollegeDetail = () => {
           >
             ← Back to Colleges
           </button>
-          
+
           <div className="flex flex-col lg:flex-row gap-8">
             <div className="lg:w-1/3">
               <img
@@ -59,9 +75,11 @@ const CollegeDetail = () => {
                 className="w-full h-64 object-cover rounded-lg"
               />
             </div>
-            
+
             <div className="lg:w-2/3">
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">{college.name}</h1>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                {college.name}
+              </h1>
               <div className="flex items-center mb-4">
                 <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm mr-3">
                   {college.category}
@@ -70,11 +88,13 @@ const CollegeDetail = () => {
                   ★ {college.rating?.toFixed(1)} ({college.reviewCount} reviews)
                 </span>
               </div>
-              
+
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
                 <div>
                   <p className="text-gray-600 text-sm">Location</p>
-                  <p className="font-medium">{college.location?.city}, {college.location?.state}</p>
+                  <p className="font-medium">
+                    {college.location?.city}, {college.location?.state}
+                  </p>
                 </div>
                 <div>
                   <p className="text-gray-600 text-sm">Established</p>
@@ -86,17 +106,19 @@ const CollegeDetail = () => {
                 </div>
                 <div>
                   <p className="text-gray-600 text-sm">Fee Range</p>
-                  <p className="font-medium">₹{college.feeRange?.min?.toLocaleString()} - ₹{college.feeRange?.max?.toLocaleString()}</p>
+                  <p className="font-medium">
+                    ₹{college.feeRange?.min?.toLocaleString()} - ₹
+                    {college.feeRange?.max?.toLocaleString()}
+                  </p>
                 </div>
               </div>
 
               <div className="flex space-x-4">
-                <button className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
-                  Apply Now
-                </button>
-                <button className="border border-gray-300 px-6 py-2 rounded-lg hover:bg-gray-50">
-                  Add to Compare
-                </button>
+                <Link to="/signuppop">
+                  <button className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
+                    Apply Now
+                  </button>
+                </Link>
               </div>
             </div>
           </div>
@@ -107,7 +129,14 @@ const CollegeDetail = () => {
       <div className="bg-white border-b">
         <div className="max-w-7xl mx-auto px-4">
           <nav className="flex space-x-8">
-            {["overview", "courses", "placement", "facilities", "reviews", "gallery"].map(tab => (
+            {[
+              "overview",
+              "courses",
+              "placement",
+              "facilities",
+              "reviews",
+              "gallery",
+            ].map((tab) => (
               <button
                 key={tab}
                 className={`py-4 px-1 border-b-2 font-medium text-sm capitalize ${
@@ -130,21 +159,26 @@ const CollegeDetail = () => {
         {activeTab === "overview" && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2">
-              <h2 className="text-2xl font-bold mb-4">About {college.name}</h2>
+              <h2 className="text-2xl font-bold mb-4">
+                About {college.name}
+              </h2>
               <p className="text-gray-700 mb-6">{college.description}</p>
-              
+
               <div className="grid grid-cols-2 gap-6 mb-6">
                 <div>
                   <h3 className="font-semibold mb-2">Exams Accepted</h3>
                   <div className="flex flex-wrap gap-2">
                     {college.examsAccepted?.map((exam, index) => (
-                      <span key={index} className="bg-gray-100 px-3 py-1 rounded-full text-sm">
+                      <span
+                        key={index}
+                        className="bg-gray-100 px-3 py-1 rounded-full text-sm"
+                      >
                         {exam}
                       </span>
                     ))}
                   </div>
                 </div>
-                
+
                 <div>
                   <h3 className="font-semibold mb-2">Rankings</h3>
                   <div className="space-y-1">
@@ -158,7 +192,7 @@ const CollegeDetail = () => {
                 </div>
               </div>
             </div>
-            
+
             <div className="bg-white p-6 rounded-lg shadow-sm">
               <h3 className="font-semibold mb-4">Quick Facts</h3>
               <div className="space-y-3">
@@ -215,11 +249,15 @@ const CollegeDetail = () => {
             <h2 className="text-2xl font-bold mb-6">Placement Statistics</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
               <div className="bg-white p-6 rounded-lg shadow-sm text-center">
-                <p className="text-2xl font-bold text-green-600">{college.placement.averagePackage}</p>
+                <p className="text-2xl font-bold text-green-600">
+                  {college.placement.averagePackage}
+                </p>
                 <p className="text-gray-600">Average Package</p>
               </div>
               <div className="bg-white p-6 rounded-lg shadow-sm text-center">
-                <p className="text-2xl font-bold text-blue-600">{college.placement.highestPackage}</p>
+                <p className="text-2xl font-bold text-blue-600">
+                  {college.placement.highestPackage}
+                </p>
                 <p className="text-gray-600">Highest Package</p>
               </div>
               <div className="bg-white p-6 rounded-lg shadow-sm text-center">
@@ -229,7 +267,7 @@ const CollegeDetail = () => {
                 <p className="text-gray-600">Top Recruiters</p>
               </div>
             </div>
-            
+
             {college.placement.topRecruiters && (
               <div>
                 <h3 className="text-xl font-semibold mb-4">Top Recruiters</h3>
@@ -283,7 +321,7 @@ const CollegeDetail = () => {
                 ))}
               </div>
             </div>
-            
+
             <div className="bg-white p-6 rounded-lg shadow-sm">
               <h3 className="font-semibold mb-4">Add Your Review</h3>
               <form onSubmit={handleAddReview}>
@@ -291,11 +329,15 @@ const CollegeDetail = () => {
                   <label className="block text-sm font-medium mb-2">Rating</label>
                   <select
                     value={review.stars}
-                    onChange={(e) => setReview({...review, stars: parseInt(e.target.value)})}
+                    onChange={(e) =>
+                      setReview({ ...review, stars: parseInt(e.target.value) })
+                    }
                     className="w-full p-2 border rounded"
                   >
-                    {[5,4,3,2,1].map(star => (
-                      <option key={star} value={star}>{star} Stars</option>
+                    {[5, 4, 3, 2, 1].map((star) => (
+                      <option key={star} value={star}>
+                        {star} Stars
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -303,7 +345,9 @@ const CollegeDetail = () => {
                   <label className="block text-sm font-medium mb-2">Comment</label>
                   <textarea
                     value={review.comment}
-                    onChange={(e) => setReview({...review, comment: e.target.value})}
+                    onChange={(e) =>
+                      setReview({ ...review, comment: e.target.value })
+                    }
                     className="w-full p-2 border rounded h-24"
                     placeholder="Share your experience..."
                   />
@@ -332,7 +376,9 @@ const CollegeDetail = () => {
                     className="w-full h-48 object-cover rounded"
                   />
                   {image.caption && (
-                    <p className="text-center mt-2 text-gray-600">{image.caption}</p>
+                    <p className="text-center mt-2 text-gray-600">
+                      {image.caption}
+                    </p>
                   )}
                 </div>
               ))}

@@ -6,7 +6,7 @@ import { CiSearch } from "react-icons/ci";
 import { FiMenu, FiX } from "react-icons/fi";
 import axios from "axios";
 import debounce from "lodash.debounce";
-
+import logo from '../assets/logo.png'
 const NavBar = () => {
   const [showSearch, setShowSearch] = useState(false);
   const [showSidebar, setShowSidebar] = useState(false);
@@ -73,7 +73,7 @@ const NavBar = () => {
   return (
     <div className="relative z-50">
       {/* Navbar */}
-      <div className="bg-[rgb(5,0,56)] py-3 px-6 md:px-12 flex flex-col md:flex-row md:items-center md:justify-between relative">
+      <div className="bg-[rgb(5,0,56)] px-6 md:px-12 flex flex-col md:flex-row md:items-center md:justify-between relative">
         {/* Left: Logo + Menu */}
         <div className="flex items-center justify-between w-full md:w-auto">
           <div className="flex items-center space-x-3">
@@ -85,8 +85,8 @@ const NavBar = () => {
             </button>
             <Link to="/">
               <img
-                className="w-32 md:w-40"
-                src="https://nj1-static.collegedekho.com/_next/static/media/collegedekhologo.c96051fc.svg?width=384&q=80"
+                className="w-22 md:h-24 md:w-24 invert"
+                src={logo}
                 alt="Logo"
               />
             </Link>

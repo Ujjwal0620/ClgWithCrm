@@ -13,7 +13,7 @@ const ads = [
 
 const Advertisment = () => {
   return (
-   <div className='py-1 px-4  m-3'>
+   <div className='py-1 px-4  m-3 md:ml-24 md:mr-24'>
     <h1 className='ml-5 font-bold'>sponsored</h1>
      <div className="space-y-4 px-2 py-2 bg-gray-50 ">
       {ads.map((ad) => (

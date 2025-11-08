@@ -6,7 +6,7 @@ const HeroBanner = () => {
     "https://www.sikshapedia.com/public/data/colleges/iit-delhi-new-delhi-delhi-ncr/iit-delhi-new-delhi-delhi-ncr-banner.webp",
     "https://paruluniversity.ac.in/app/images/post/blog/featured_image/894265Parul%20University%20Top%2050%20NIRF%20Ranking%20.png",
     "https://neurosurgeryaiims.org/extra-images/bannerm.jpg",
-    "https://scontent.fpat3-1.fna.fbcdn.net/v/t39.30808-6/294262473_534856251749853_3324468620555309227_n.jpg?stp=dst-jpg_s960x960_tt6&_nc_cat=103&ccb=1-7&_nc_sid=2285d6&_nc_ohc=jVLQzSU2jq4Q7kNvwEXsyno&_nc_oc=AdlikW7yAhoAEYRUUnkdPrGTW1B9S0DewX_BzyXeQ6xKRNj3hGrvIhB9LzHSqTBjBfIPjwt9xa1JfrWLz8cD91v6&_nc_zt=23&_nc_ht=scontent.fpat3-1.fna&_nc_gid=wUGma2w8TsqaVplu9Z8lOw&oh=00_AfZacWoyVrg0hBMj1Cq2QyH6d-JYWggxcrqU8tqGDS3I3A&oe=68D3FFD4",
+    "https://eduscope.co.in/wp-content/uploads/2025/01/swami-vivekananda-university-kolkata-4.webp",
   ];
 
   const [currentIndex, setCurrentIndex] = useState(0);
